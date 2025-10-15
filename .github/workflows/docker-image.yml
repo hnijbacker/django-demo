@@ -37,6 +37,7 @@ jobs:
           images: ${{ env.IMAGE_NAME }}
           tags: |
             type=semver,pattern={{version}}
+          flavor: latest=false
 
       - name: Build and push image
         uses: docker/build-push-action@v5
@@ -64,7 +65,7 @@ jobs:
         run: |
           cd deployment-repo
           FILE="base/django-deployment.yaml" # path to manifest in deployment repo
-          yq e -i '.spec.template.spec.containers[0].image |= "${{ env.IMAGE_NAME_TAG }}"' "$FILE"
+          yq e -i '.spec.template.spec.containers[0].image |= ${{ env.IMAGE_NAME_TAG }}' "$FILE"
 
       - name: Commit changes
         run: |
