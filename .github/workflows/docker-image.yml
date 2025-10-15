@@ -37,7 +37,8 @@ jobs:
           images: ${{ env.IMAGE_NAME }}
           tags: |
             type=semver,pattern={{version}}
-          flavor: latest=false
+          flavor: |
+            latest=false
 
       - name: Build and push image
         uses: docker/build-push-action@v5
