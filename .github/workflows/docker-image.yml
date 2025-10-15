@@ -54,6 +54,8 @@ jobs:
 
   update-deployment-repo:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
     steps:
       - name: Checkout deployment repo
         uses: actions/checkout@v4
@@ -67,7 +69,6 @@ jobs:
           cd deployment-repo
           FILE="base/django-deployment.yaml" # path to manifest in deployment repo
           IMAGE=${{ env.IMAGE_NAME }}
-          IMAGE_TAG=${{ needs.build-and-push.outputs.image_tag }}  # <-- use the job output here
           yq e -i ".spec.template.spec.containers[0].image = \"${IMAGE}:${IMAGE_TAG}\"" "$FILE"
 
       - name: Commit changes
