@@ -64,10 +64,10 @@ jobs:
 
       - name: Update manifest with tag from previous job
         run: |
-          ls -l
+          cd deployment-repo
           FILE="base/django-deployment.yaml" # path to manifest in deployment repo
           IMAGE=${{ env.IMAGE_NAME }}
-          IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"  # <-- use the job output here
+          IMAGE_TAG=${{ needs.build-and-push.outputs.image_tag }}  # <-- use the job output here
           yq e -i ".spec.template.spec.containers[0].image = \"${IMAGE}:${IMAGE_TAG}\"" "$FILE"
 
       - name: Commit changes
