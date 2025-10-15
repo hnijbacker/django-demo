@@ -58,7 +58,7 @@ jobs:
       - name: Checkout deployment repo
         uses: actions/checkout@v4
         with:
-          repository: https://github.com/hnijbacker/django-deployment.git
+          repository: https://github.com/hnijbacker/django-deployment
           token: ${{ secrets.DJANGO_DEPLOYMENT_TOKEN }} # PAT with push permission
           path: deployment-repo
 
