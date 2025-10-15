@@ -53,7 +53,7 @@ jobs:
       - build-and-push
     runs-on: ubuntu-latest
     env:
-      IMAGE: ${{ needs.build-and-push.outputs.image_tag }}
+      IMAGE_TAG: ${{ needs.build-and-push.outputs.version }}
     steps:
       - name: Checkout deployment repo
         uses: actions/checkout@v4
@@ -66,7 +66,7 @@ jobs:
         run: |
           cd deployment-repo
           FILE="base/django-deployment.yaml" # path to manifest in deployment repo
-          yq e -i ".spec.template.spec.containers[0].image = \"${{ env.IMAGE }}\"" "$FILE"
+          yq e -i ".spec.template.spec.containers[0].image |= (split(\":\")[0] + \"${{ env.IMAGE_TAG }}\"" "$FILE"
 
       - name: Commit changes
         run: |
@@ -74,5 +74,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Update image tag to ${IMAGE_TAG}"
+          git commit -m "Update image tag to ${{ env.IMAGE }}"
           git push
