@@ -51,7 +51,7 @@ jobs:
       - build-and-push
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME_TAG: ${{ needs.build-and-push.outputs.tags }}
+      IMAGE_NAME_TAG: ${{ needs.build-and-push.outputs.image }}
     steps:
       - name: Checkout deployment repo
         uses: actions/checkout@v4
@@ -72,5 +72,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Update image tag to ${{ env.IMAGE }}"
+          git commit -m "Update image tag to ${{ env.IMAGE_NAME_TAG }}"
           git push
