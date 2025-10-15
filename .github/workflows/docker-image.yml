@@ -53,6 +53,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   update-deployment-repo:
+    needs:
+      - build-and-push
     runs-on: ubuntu-latest
     env:
       IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
@@ -77,5 +79,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Update image tag to ${{ steps.vars.outputs.tag }}"
+          git commit -m "Update image tag to ${IMAGE_TAG}"
           git push
