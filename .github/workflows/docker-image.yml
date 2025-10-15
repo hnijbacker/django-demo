@@ -64,6 +64,7 @@ jobs:
 
       - name: Update manifest with tag from previous job
         run: |
+          ls -l
           FILE="base/django-deployment.yaml" # path to manifest in deployment repo
           IMAGE=${{ env.IMAGE_NAME }}
           IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"  # <-- use the job output here
