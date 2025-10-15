@@ -39,7 +39,7 @@ jobs:
           tags: |
             type=ref,event=tag
             type=ref,event=branch
-            type=raw,value=latest,enable={{github.ref == 'refs/heads/main'}}
+            type=raw,value=latest,enable=${{github.ref == 'refs/heads/main'}}
           labels: |
             org.opencontainers.image.source=${{ github.repositoryUrl }}
 
