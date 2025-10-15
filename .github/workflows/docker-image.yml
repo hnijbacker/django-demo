@@ -64,7 +64,7 @@ jobs:
         run: |
           cd deployment-repo
           FILE="base/django-deployment.yaml" # path to manifest in deployment repo
-          yq e -i '.spec.template.spec.containers[0].image |= (split(":")[0] + ":${{ env.IMAGE_TAG }}") "$FILE"
+          yq e -i '.spec.template.spec.containers[0].image |= (split(":")[0] + ":${{ env.IMAGE_TAG }}")' "$FILE"
 
       - name: Commit changes
         run: |
