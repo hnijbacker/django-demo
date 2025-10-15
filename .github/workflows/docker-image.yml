@@ -44,6 +44,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -66,7 +67,7 @@ jobs:
         run: |
           cd deployment-repo
           FILE="base/django-deployment.yaml" # path to manifest in deployment repo
-          yq e -i '.spec.template.spec.containers[0].image = "${{ env.IMAGE_NAME_TAG }}"' "$FILE"
+          yq eval -i '.spec.template.spec.containers[0].image = "${{ env.IMAGE_NAME_TAG }}"' "$FILE"
 
       - name: Commit changes
         run: |
