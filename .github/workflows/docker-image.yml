@@ -28,7 +28,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }} # checkout tag
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }} # for pr head_ref is empty so use tag 
 
       - name: Find branch containing tag commit
         id: find-branch
