@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME_TAG: ${{ needs.build-and-push.outputs.image }}
-      BRANCH: ${{ steps.find-branch.outputs.branch }}
+      BRANCH: ${{ needs.build-and-push.outputs.branch }}
     steps:
       - name: Checkout deployment repo
         uses: actions/checkout@v4
