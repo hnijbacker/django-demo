@@ -17,17 +17,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Show branch
-        run: echo "Branch is ${GITHUB_REF}"
+        run: echo "Branch/tag is ${GITHUB_REF}"
 
   build-and-push:
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.meta.outputs.tags }}
+      branch: ${{ steps.find-branch.outputs.branch }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.ref_name }} # checkout tag
+
+      - name: Find branch containing tag commit
+        id: find-branch
+        run: |
+          COMMIT_SHA=$(git rev-list -n 1 "${GITHUB_REF_NAME}")
+          echo "Commit SHA: $COMMIT_SHA"
+
+          echo "Remote branches containing commit:"
+          git fetch --all --quiet
+          BRANCHES=$(git branch -r --contains "$COMMIT_SHA" | sed 's|origin/||' | tr '\n' ' ')
+          echo "Branches: $BRANCHES"
+
+          # Pick the first branch (you can change selection logic here)
+          MAIN_BRANCH=$(echo "$BRANCHES" | awk '{print $1}')
+          echo "Selected branch: $MAIN_BRANCH"
+
+          # Set output for later steps
+          echo "branch=$MAIN_BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Show selected branch
+        run: |
+          echo "Branch for tag is: '${{ steps.find-branch.outputs.branch }}'"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -63,6 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME_TAG: ${{ needs.build-and-push.outputs.image }}
+      BRANCH: ${{ steps.find-branch.outputs.branch }}
     steps:
       - name: Checkout deployment repo
         uses: actions/checkout@v4
@@ -70,7 +94,7 @@ jobs:
           repository: hnijbacker/django-deployment
           token: ${{ secrets.DJANGO_DEPLOYMENT_TOKEN }} # PAT with push permission
           path: deployment-repo
-          ref: ${{ github.ref }} # check out specific branch
+          ref: ${{ env.BRANCH }} # check out specific branch
 
       - name: Update manifest with tag from previous job
         run: |
