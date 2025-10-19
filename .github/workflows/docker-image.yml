@@ -94,13 +94,19 @@ jobs:
           repository: hnijbacker/django-deployment
           token: ${{ secrets.DJANGO_DEPLOYMENT_TOKEN }} # PAT with push permission
           path: deployment-repo
-          ref: ${{ env.BRANCH }} # check out specific branch
+          ref: main
 
       - name: Update manifest with tag from previous job
         run: |
           cd deployment-repo
-          FILE="base/django-deployment.yaml" # path to manifest in deployment repo
-          yq eval -i '.spec.template.spec.containers[0].image = "${{ env.IMAGE_NAME_TAG }}"' "$FILE"
+          if [[ "${{ env.BRANCH }}" == "main" ]]; then
+            FILE="overlays/prod/kustomization.yaml" # path to manifest in deployment repo
+          elif [[ "${{ env.BRANCH }}" == "development" ]]; then
+            FILE="overlays/dev/kustomization.yaml"
+          fi
+          # Split IMAGE_NAME_TAG into name and tag. Only the tag is needed
+          TAG=$( echo ${{ env.IMAGE_NAME_TAG }} | cut -d: -f2 )
+          yq eval -i '.images.newTag = "${TAG}"' "$FILE"
 
       - name: Commit changes
         run: |
