@@ -107,7 +107,8 @@ jobs:
           # Split IMAGE_NAME_TAG into name and tag. Only the tag is needed
           TAG=$( echo ${{ env.IMAGE_NAME_TAG }} | cut -d: -f2 )
           echo $TAG
-          yq eval -i '.images.[].newTag = "${TAG}"' "$FILE"
+          # Need double quotes to expand $TAG
+          yq eval -i ".images.[].newTag = \"${TAG}\"" "$FILE"
 
       - name: Commit changes
         run: |
