@@ -61,7 +61,7 @@ jobs:
 
       - name: Extract tag
         id: extract_tag
-        run: echo "Tag is ${{ github.ref_name }}" >> $GITHUB_OUTPUT
+        run: echo "${{ github.ref_name }}" >> $GITHUB_OUTPUT
         
       - name: Setup ORAS
         uses: oras-project/setup-oras@v1
