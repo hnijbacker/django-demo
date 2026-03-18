@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-sqldata
+spec:
+  storageClassName: local-path
+  volumeName: pv-sqldata-dev
+  accessModes:
+  -  ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Mi

@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-web-app
+  labels:
+    app: django-web-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: django-web-app
+  template:
+    metadata:
+      labels:
+        app: django-web-app
+    spec:
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: pvc-sqldata
+      containers:
+        - name: django-web-app
+          image: 'paridaen/django-web-app:0.4.6'
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 200m
+            requests:
+              memory: 100Mi
+              cpu: 100m
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - mountPath: "/app/db"
+              name: db-storage
+          env:
+            - name: DEBUG
+              value: "True"
+            - name: SECRET_KEY
+              value: "secret_key"
+            - name: ALLOWED_HOSTS
+              value: "django.localhost,django-prod.localhost,localhost,127.0.0.1"

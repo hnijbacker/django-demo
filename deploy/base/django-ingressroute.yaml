@@ -1,0 +1,14 @@
+# whoami-ingressroute.yaml
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: django
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`django.localhost`)
+      kind: Rule
+      services:
+        - name: django-service
+          port: 80

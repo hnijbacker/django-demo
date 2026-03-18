@@ -1,0 +1,15 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-sqldata-prod
+  labels:
+    type: local
+spec:
+  storageClassName: local-path
+  capacity:
+    storage: 40Mi
+  accessModes:
+  -  ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  hostPath:
+    path: /tmp/sqlite_data_prod
