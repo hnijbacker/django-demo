@@ -83,4 +83,4 @@ jobs:
           DEPLOY_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
         run: |
           tar czf deployment.tgz deploy
-          oras push "${{ steps.meta.outputs.tags }}" deployment.tgz:application/vnd.oci.image.layer.v1.tar+gzip
+          oras push "${{ env.DEPLOY_TAG }}" deployment.tgz:application/vnd.oci.image.layer.v1.tar+gzip
