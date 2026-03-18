@@ -22,9 +22,6 @@ jobs:
       
    build-and-push:
     runs-on: ubuntu-latest
-    outputs:
-      image: ${{ steps.meta.outputs.tags }}
-      branch: ${{ steps.find-branch.outputs }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
