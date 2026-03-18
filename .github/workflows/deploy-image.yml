@@ -80,7 +80,7 @@ jobs:
 
       - name: Package deployment manifests as OCI artifact
         env:
-          DEPLOY_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          DEPLOY_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
         run: |
           tar czf deployment.tgz deploy
           oras push "${{ env.DEPLOY_TAG }}" deployment.tgz:application/vnd.oci.image.layer.v1.tar+gzip
