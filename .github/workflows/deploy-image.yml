@@ -20,6 +20,12 @@ jobs:
       - name: Show branch
         run: echo "Branch/tag is ${GITHUB_REF_NAME}"
 
+      - name: Setup ORAS
+        uses: oras-project/setup-oras@v1
+
+      - name: Use ORAS
+        run: oras version
+      
    build-and-push:
     runs-on: ubuntu-latest
     outputs:
