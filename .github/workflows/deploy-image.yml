@@ -1,4 +1,4 @@
-name: Build and push container image
+name: Build and push deploy image
 
 on:
   push:
@@ -58,16 +58,6 @@ jobs:
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE_NAME }}
-          tags: |
-            type=semver,pattern={{version}}
-          flavor: |
-            latest=false
       
       - name: Setup ORAS
         uses: oras-project/setup-oras@v1
