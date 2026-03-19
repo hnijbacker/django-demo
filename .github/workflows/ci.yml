@@ -94,5 +94,5 @@ jobs:
 
       - name: Push Kustomize OCI bundle
         run: |
-          oras push IMAGE_NAME_CONFIG:${{ steps.vars.outputs.VERSION }} \
+          oras push ${IMAGE_NAME_CONFIG}:${{ steps.vars.outputs.VERSION }} \
             kustomize.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
