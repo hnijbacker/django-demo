@@ -1,0 +1,89 @@
+name: Build and push
+
+on:
+  push:
+    branches:
+      - main
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: paridaen/django-web-app
+  IMAGE_NAME_CONFIG: ${IMAGE_NAME}-config
+
+jobs:
+   print-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show branch
+        run: echo "Branch/tag is ${GITHUB_REF_NAME}"
+      
+   build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
+      - name: Extract version info
+        id: vars
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          SHA=${GITHUB_SHA::7}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION_SHA=${VERSION}-${SHA}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push Docker image
+        run: |
+          docker build \
+            -t $IMAGE_NAME:${{ steps.vars.outputs.VERSION }} \
+            -t $IMAGE_NAME:${{ steps.vars.outputs.VERSION_SHA }} \
+            -t $IMAGE_NAME:latest .
+          docker push $IMAGE_NAME:${{ steps.vars.outputs.VERSION }}
+          docker push $IMAGE_NAME:${{ steps.vars.outputs.VERSION_SHA }}
+          docker push $IMAGE_NAME:latest
+
+      - name: Replace placeholders in Kustomize overlays
+        run: |
+          find kustomize/overlays -name kustomization.yaml -o -name "*.yaml" | \
+          xargs sed -i "s/PLACEHOLDER_VERSION/${{ steps.vars.outputs.VERSION }}/g; s/PLACEHOLDER_GIT_SHA/${{ steps.vars.outputs.VERSION_SHA }}/g"
+
+      - name: Package Kustomize bundle
+        run: tar -czf kustomize.tar.gz kustomize/
+
+      - name: Setup ORAS
+        uses: oras-project/setup-oras@v1
+
+      - name: Use ORAS
+        run: oras version
+
+      - name: Push Kustomize OCI bundle
+        run: |
+          oras push IMAGE_NAME_CONFIG:${{ steps.vars.outputs.VERSION }} \
+            kustomize.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip

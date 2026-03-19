@@ -1,0 +1,58 @@
+name: One-Click Promote Release
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: paridaen/django-web-app
+  IMAGE_NAME_CONFIG: ${IMAGE_NAME}-config
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_env:
+        description: 'Source environment (dev)'
+        required: true
+        default: dev
+      target_env:
+        description: 'Target environment (prod)'
+        required: true
+        default: staging
+      version:
+        description: 'Version to promote (v1.3.0, etc.)'
+        required: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.target_env }}  # approval gate for staging/prod
+
+    steps:
+      - name: Setup ORAS
+        uses: oras-project/setup-oras@v1
+
+      - name: Use ORAS
+        run: oras version
+
+      - name: Determine version if not provided
+        id: version
+        run: |
+          if [ -z "${{ github.event.inputs.version }}" ]; then
+            # Pull latest version from source environment tag
+            VERSION=$(oras manifest inspect ${IMAGE_NAME_CONFIG}:${{ github.event.inputs.source_env }} | jq -r '.config.digest')
+            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Promote Kustomize OCI bundle
+        run: |
+          echo "Promoting ${{ steps.version.outputs.VERSION }} → ${{ github.event.inputs.target_env }}"
+          oras copy \
+            ${IMAGE_NAME_CONFIG}:${{ steps.version.outputs.VERSION }} \
+            ${IMAGE_NAME_CONFIG}:${{ github.event.inputs.target_env }}
+
+      - name: Promote Docker image (optional)
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker pull ${IMAGE_NAME}:${{ steps.version.outputs.VERSION }}
+          docker tag ${IMAGE_NAME}:${{ steps.version.outputs.VERSION }} myrepo/myapp:${{ github.event.inputs.target_env }}
+          docker push ${IMAGE_NAME}:${{ github.event.inputs.target_env }}
