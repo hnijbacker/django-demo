@@ -16,7 +16,7 @@ permissions:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: paridaen/django-web-app
-  IMAGE_NAME_CONFIG: ${IMAGE_NAME}-config
+  IMAGE_NAME_CONFIG: paridaen/django-web-app-config
 
 jobs:
    print-branch:
