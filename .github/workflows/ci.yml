@@ -46,7 +46,7 @@ jobs:
  
       - name: Run semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DJANGO_DEMO_TOKEN }}
         run: npx semantic-release
 
       - name: Extract version info
