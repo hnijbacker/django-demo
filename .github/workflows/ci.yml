@@ -8,8 +8,10 @@ on:
       - 'v*'
 
 permissions:
-  contents: read
+  contents: write
   packages: write
+  issues: write         # needed to comment on issues
+  pull-requests: write  # needed to comment on PRs
 
 env:
   REGISTRY: docker.io
