@@ -17,7 +17,7 @@ images:
 
 commonLabels:
   app.kubernetes.io/managed-by: argocd
-  app.kubernetes.io/environment: dev
+  app.kubernetes.io/environment: prod
   app.kubernetes.io/version: PLACEHOLDER_VERSION
 
 commonAnnotations:
