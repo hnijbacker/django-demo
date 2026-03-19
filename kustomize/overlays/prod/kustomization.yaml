@@ -15,10 +15,16 @@ images:
     newName: paridaen/django-web-app
     newTag: PLACEHOLDER_VERSION
 
-commonLabels:
-  app.kubernetes.io/managed-by: argocd
-  app.kubernetes.io/environment: prod
-  app.kubernetes.io/version: PLACEHOLDER_VERSION
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: argocd
+      app.kubernetes.io/environment: prod
+    includeSelectors: true
+    includeTemplates: true
+  - pairs:
+      app.kubernetes.io/version: PLACEHOLDER_VERSION
+    includeSelectors: false
+    includeTemplates: true
 
 commonAnnotations:
   git.sha: PLACEHOLDER_GIT_SHA
