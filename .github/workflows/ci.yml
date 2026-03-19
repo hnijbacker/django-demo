@@ -36,6 +36,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install dependencies
+        run: npm ci  # installs everything from package-lock.json
+
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
