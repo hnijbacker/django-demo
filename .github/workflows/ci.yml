@@ -54,7 +54,7 @@ jobs:
       - name: Extract version info
         id: vars
         run: |
-          VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${GITHUB_REF_NAME}
           SHA=${GITHUB_SHA::7}
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "VERSION_SHA=${VERSION}-${SHA}" >> $GITHUB_OUTPUT
