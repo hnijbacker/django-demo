@@ -10,6 +10,7 @@ permissions:
   packages: write
   issues: write         # needed to comment on issues
   pull-requests: write  # needed to comment on PRs
+  id-token: write       # Required for keyless OIDC signing
 
 env:
   REGISTRY: docker.io
@@ -60,6 +61,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -67,14 +71,20 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build & push Docker image
+        id: build-push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.VERSION }}
+            ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.VERSION_SHA }}
+            ${{ env.IMAGE_NAME }}:latest
+
+      - name: Sign Docker image (Keyless)
         run: |
-          docker build \
-            -t $IMAGE_NAME:${{ steps.vars.outputs.VERSION }} \
-            -t $IMAGE_NAME:${{ steps.vars.outputs.VERSION_SHA }} \
-            -t $IMAGE_NAME:latest .
-          docker push $IMAGE_NAME:${{ steps.vars.outputs.VERSION }}
-          docker push $IMAGE_NAME:${{ steps.vars.outputs.VERSION_SHA }}
-          docker push $IMAGE_NAME:latest
+          cosign sign --yes \
+            $IMAGE_NAME:@${{ steps.build-push.outputs.digest }}
 
       - name: Replace placeholders in Kustomize overlays
         run: |
@@ -91,6 +101,14 @@ jobs:
         run: oras version
 
       - name: Push Kustomize OCI bundle
+        id: oras-push
         run: |
-          oras push docker.io/${IMAGE_NAME_CONFIG}:${{ steps.vars.outputs.VERSION }} \
-            kustomize.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+          DIGEST=$(oras push docker.io/${IMAGE_NAME_CONFIG}:${{ steps.vars.outputs.VERSION }} \
+            kustomize.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip \
+            --format json | jq -r '.digest')
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+            
+      - name: Sign Kustomize OCI bundle
+        run: |
+          cosign sign --yes \
+            docker.io/${IMAGE_NAME_CONFIG}@${{ steps.oras-push.outputs.digest }}
