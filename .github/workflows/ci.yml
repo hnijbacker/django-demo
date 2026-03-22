@@ -84,7 +84,7 @@ jobs:
       - name: Sign Docker image (Keyless)
         run: |
           cosign sign --yes \
-            $IMAGE_NAME:@${{ steps.build-push.outputs.digest }}
+            $IMAGE_NAME@${{ steps.build-push.outputs.digest }}
 
       - name: Replace placeholders in Kustomize overlays
         run: |
@@ -107,7 +107,7 @@ jobs:
             kustomize.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip \
             --format json | jq -r '.digest')
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
-            
+
       - name: Sign Kustomize OCI bundle
         run: |
           cosign sign --yes \
