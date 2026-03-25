@@ -21,7 +21,7 @@ spec:
             claimName: pvc-sqldata
       containers:
         - name: django-web-app
-          image: 'paridaen/django-web-app:0.4.6'
+          image: 'ghcr.io/hnijbacker/django-web-app:0.4.6'
           resources:
             limits:
               memory: 200Mi
