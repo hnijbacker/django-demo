@@ -1,9 +1,9 @@
 name: One-Click Promote Release
 
 env:
-  REGISTRY: docker.io
-  IMAGE_NAME: paridaen/django-web-app
-  IMAGE_NAME_CONFIG: paridaen/django-web-app-config
+  REGISTRY: ghcr.io
+  IMAGE_NAME: hnijbacker/django-web-app
+  IMAGE_NAME_CONFIG: hnijbacker/django-web-app-config
 
 on:
   workflow_dispatch:
