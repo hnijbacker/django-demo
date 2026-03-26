@@ -11,8 +11,8 @@ replicas:
     count: 5
 # The image name and tag will be replaced automatically by GitHub Actions
 images:
-  - name: paridaen/django-web-app
-    newName: paridaen/django-web-app
+  - name: ghcr.io/hnijbacker/django-web-app
+    newName: ghcr.io/hnijbacker/django-web-app
     newTag: PLACEHOLDER_VERSION
 
 labels:
