@@ -6,7 +6,7 @@ resources:
 namespace: django-dev
 replicas:
   - name: django-web-app
-    count: 1
+    count: 3
 
 # The image name and tag will be replaced automatically by GitHub Actions
 images:
