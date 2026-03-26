@@ -36,10 +36,10 @@ jobs:
         run: oras version
       
       - name: ORAS Login
-        run: echo ${{ secrets.GITHUB_TOKEN }} | oras login ghcr.io \
-             --username ${{ github.actor }} \
-             --password-stdin
-          
+        run: oras login --username ${{ github.actor }} \
+             --password ${{ secrets.GITHUB_TOKEN }} \
+             ghcr.io
+            
       - name: Determine version if not provided
         id: version
         run: |
