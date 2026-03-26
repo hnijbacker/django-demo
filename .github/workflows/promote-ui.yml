@@ -47,7 +47,7 @@ jobs:
         run: |
           if [ -z "${{ github.event.inputs.version }}" ]; then
             # Pull latest version from source environment tag
-            VERSION=$(oras manifest inspect ${IMAGE_NAME_CONFIG}:${{ github.event.inputs.source_env }} | jq -r '.config.digest')
+            VERSION=$(oras manifest fetch ${IMAGE_NAME_CONFIG}:${{ github.event.inputs.source_env }} | jq -r '.config.digest')
             echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           else
             echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
