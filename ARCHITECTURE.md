@@ -29,19 +29,19 @@ The Django Web App is a containerized, cloud-native web application designed for
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         End Users                            │
+│                         End Users                           │
 └───────────────────────────┬─────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    Ingress/Gateway API                       │
-│                   (TLS Termination)                          │
+│                    Ingress/Gateway API                      │
+│                   (TLS Termination)                         │
 └───────────────────────────┬─────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   Kubernetes Service                         │
-│                  (Load Balancing)                            │
+│                   Kubernetes Service                        │
+│                  (Load Balancing)                           │
 └───────────────────────────┬─────────────────────────────────┘
                             │
               ┌─────────────┼─────────────┐
