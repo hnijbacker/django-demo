@@ -36,9 +36,11 @@ jobs:
         run: oras version
       
       - name: ORAS Login
-        run: oras login --username ${{ github.actor }} \
-             --password ${{ secrets.GITHUB_TOKEN }} \
-             ghcr.io
+        run: |
+          oras login \
+          --username ${{ github.actor }} \
+          --password ${{ secrets.GITHUB_TOKEN }} \
+          ghcr.io
             
       - name: Determine version if not provided
         id: version
