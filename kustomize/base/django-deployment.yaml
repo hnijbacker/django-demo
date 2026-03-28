@@ -40,4 +40,4 @@ spec:
             - name: SECRET_KEY
               value: "secret_key"
             - name: ALLOWED_HOSTS
-              value: "django.localhost,django-prod.localhost,localhost,127.0.0.1"
+              value: "django.nijbacker.net,django-prod.nijbacker.net,localhost,127.0.0.1"
