@@ -3,5 +3,5 @@ kind: Kustomization
 resources:
   - django-deployment.yaml
   - django-service.yaml
-  - gateway.yml
+  - gateway.yaml
   - django-httproute.yaml
