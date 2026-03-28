@@ -7,7 +7,7 @@ metadata:
   name: django-demo
 spec:
   parentRefs:
-    - name: django
+    - name: traefik-gateway
   hostnames:
     - "django.example.com"  # will be patched by overlay
   rules:
