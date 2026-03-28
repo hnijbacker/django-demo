@@ -1,0 +1,20 @@
+
+---
+# HTTPRoute to direct requests to the service
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: django-demo
+spec:
+  parentRefs:
+    - name: traefik
+  hostnames:
+    - "django.example.com"  # will be patched by overlay
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: django-service
+          port: 80
