@@ -14,6 +14,15 @@ images:
     newName: ghcr.io/hnijbacker/django-web-app
     newTag: PLACEHOLDER_VERSION
 
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/hostnames/0
+        value: django.nijbacker.net
+    target:
+      kind: HTTPRoute
+      name: django-demo
+
 labels:
   - pairs:
       app.kubernetes.io/managed-by: argocd
