@@ -8,6 +8,7 @@ metadata:
 spec:
   parentRefs:
     - name: traefik-gateway
+      namespace: kube-system # where traefik lives!
   hostnames:
     - "django.example.com"  # will be patched by overlay
   rules:
