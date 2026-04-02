@@ -1,0 +1,14 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: gateway-default-cert
+  namespace: kube-system
+spec:
+  secretName: gateway-default-cert
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  dnsNames:
+    - django.nijbacker.net
+    - django-prod.nijbacker.net
